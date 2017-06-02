@@ -6,3 +6,4 @@
 __init__.py
 .ipynb_checkpoints/
 bower_components/
+.txt
