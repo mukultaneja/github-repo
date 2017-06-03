@@ -7,12 +7,12 @@
 
 import os
 import logging
+from datetime import datetime as dt
 import scrapy
 import pandas as pd
 from odo import odo
 from sqlalchemy import create_engine
-import datetime
-from datetime import datetime as dt
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -40,7 +40,6 @@ class RepovisItem(scrapy.Item):
         '''
         Function
         '''
-        response = sorted(response, key=lambda row: row['id'])
         response_length = len(response)
         owners = pd.DataFrame()
         repos = pd.DataFrame()
@@ -94,8 +93,9 @@ class RepovisItem(scrapy.Item):
         except ValueError:
             pass
 
-        if len(owners) > 0 and len(repos) > 0:
+        if len(owners) > 0:
             odo(owners, ENGINE_STRING + '::owners')
+        if len(repos) > 0:
             odo(repos, ENGINE_STRING + '::repos')
 
         last_repo_record = RepovisItem.connection.execute(
@@ -105,30 +105,14 @@ class RepovisItem(scrapy.Item):
         last_repo_id = [row[0] for row in last_repo_record][0]
         last_owner_id = [row[0] for row in last_owner_record][0]
 
-        logging.info('records in repos: {}'.format(last_repo_id))
-        logging.info('records in owners: {}'.format(last_owner_id))
+        log_repo_id = 'records in repos: {}'.format(last_repo_id)
+        log_owner_id = 'records in owners: {}'.format(last_owner_id)
 
-        self.store_records(last_repo_id, last_owner_id)
+        logging.info(log_repo_id)
+        logging.info(log_owner_id)
 
-    def store_records(self, last_repo_id, last_owner_id):
-        '''
-        Function
-        '''
-        if os.path.isfile('reports.csv'):
-            reports = pd.read_csv('reports.csv', index_col=False)
-            try:
-                reports.drop('Unnamed: 0', inplace=True, axis=1)
-            except ValueError:
-                pass
-            temp = pd.DataFrame({'repo_id': [last_repo_id],
-                                 'owner_id': [last_owner_id]})
-            reports = reports.append(temp, ignore_index=True)
-        else:
-            reports = pd.DataFrame({'repo_id': [last_repo_id],
-                                    'owner_id': [last_owner_id]})
-        reports.to_csv('reports.csv')
 
-    def store_repo_languages(self, response, repo_id):
+    def store_languages(self, response, repo_id):
         '''
         Function
         '''
@@ -139,7 +123,7 @@ class RepovisItem(scrapy.Item):
         meta['repo_id'] = repo_id
         odo(meta, ENGINE_STRING + '::languages')
 
-    def store_repo_forks(self, forks, repo_id):
+    def store_forks(self, forks, repo_id):
         '''
         Function
         '''
@@ -148,7 +132,7 @@ class RepovisItem(scrapy.Item):
 
         odo(meta, ENGINE_STRING + '::forks')
 
-    def store_repo_stargazers(self, stargazers, repo_id):
+    def store_stargazers(self, stargazers, repo_id):
         '''
         Function
         '''
@@ -157,7 +141,7 @@ class RepovisItem(scrapy.Item):
 
         odo(meta, ENGINE_STRING + '::stargazers')
 
-    def store_repo_contributors(self, contributors, repo_id):
+    def store_contributors(self, contributors, repo_id):
         '''
         Function
         '''
@@ -165,3 +149,16 @@ class RepovisItem(scrapy.Item):
                              'contributors': [contributors]})
 
         odo(meta, ENGINE_STRING + '::contributors')
+
+    def store_meta_data(self, key, res, repo_id):
+        '''
+        Function
+        '''
+        if key == 'forks':
+            self.store_forks(res, repo_id)
+        elif key == 'languages':
+            self.store_languages(res, repo_id)
+        elif key == 'stargazers':
+            self.store_stargazers(res, repo_id)
+        else:
+            self.store_contributors(res, repo_id)

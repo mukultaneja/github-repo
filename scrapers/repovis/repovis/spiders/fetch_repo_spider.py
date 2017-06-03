@@ -1,8 +1,27 @@
 
 import json
 import time
+import logging
+from logging.handlers import RotatingFileHandler
 import scrapy
 from repovis.items import RepovisItem
+
+
+def create_logger():
+    '''
+    Function
+    '''
+    logger = logging.getLogger("Rotating Log")
+    if not len(logger.handlers):
+        formatter = logging.Formatter(
+            '%(asctime)s, %(levelname)s, %(message)s')
+        logger.setLevel(logging.INFO)
+        handler = RotatingFileHandler('logs/scrapers.logs', maxBytes=1024000,
+                                      backupCount=5)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    return logger
 
 
 class FetchPublicRepo(scrapy.Spider):
@@ -11,6 +30,7 @@ class FetchPublicRepo(scrapy.Spider):
     '''
     name = 'fetchpublicrepo'
     visitem = RepovisItem()
+    logger = create_logger()
 
     def build_url(self, url, repo_id):
         '''
@@ -37,7 +57,9 @@ class FetchPublicRepo(scrapy.Spider):
         '''
         process_response = FetchPublicRepo.visitem.process_response
         json_response = json.loads(response.text)
+        json_response = sorted(json_response, key=lambda row: row['id'])
         max_id = process_response(json_response)
+        logstr = None
         for row in json_response:
             repo_id = row['id']
             next_urls = {}
@@ -46,6 +68,13 @@ class FetchPublicRepo(scrapy.Spider):
             next_urls['languages'] = row['languages_url']
             next_urls['contributors'] = row['contributors_url']
             next_urls['stargazers'] = row['stargazers_url']
+
+            # logging response status
+            logstr = 'repo id = {}, URL = {}, Status = {}'.format(
+                repo_id, row['html_url'], response.status)
+            FetchPublicRepo.logger.info(logstr)
+
+            # fetch all the meta data related to specific repo
             for key, url in next_urls.iteritems():
                 url = self.build_url(url=url + '?', repo_id=repo_id)
                 yield scrapy.Request(url=url,
@@ -53,10 +82,11 @@ class FetchPublicRepo(scrapy.Spider):
                                      meta={'repo_id': repo_id,
                                            'key': key})
 
-        url = self.build_url(url=None, repo_id=max_id)
+        # adding break as rate limit is 5000/ hr
         time.sleep(360)
-        yield scrapy.Request(url=url, callback=self.parse)
 
+        url = self.build_url(url=None, repo_id=max_id)
+        yield scrapy.Request(url=url, callback=self.parse)
 
     def parse_next_url(self, response):
         '''
@@ -64,15 +94,17 @@ class FetchPublicRepo(scrapy.Spider):
         '''
         repo_id = response.meta.get('repo_id')
         key = response.meta.get('key')
-        if key == 'forks':
-            store_repo_forks = FetchPublicRepo.visitem.store_repo_forks
-            store_repo_forks(len(json.loads(response.text)), repo_id)
-        elif key == 'languages':
-            store_repo_languages = FetchPublicRepo.visitem.store_repo_languages
-            store_repo_languages(json.loads(response.text), repo_id)
-        elif key == 'stargazers':
-            store_repo_stargazers = FetchPublicRepo.visitem.store_repo_stargazers
-            store_repo_stargazers(len(json.loads(response.text)), repo_id)
+        store_meta_data = FetchPublicRepo.visitem.store_meta_data
+        res = None
+        if response.status == 200:
+            res = json.loads(response.text) if key == 'languages' else len(
+                json.loads(response.text))
         else:
-            store_repo_contributors = FetchPublicRepo.visitem.store_repo_contributors
-            store_repo_contributors(len(json.loads(response.text)), repo_id)
+            res = {} if key == 'languages' else 0
+
+        # logging response status
+        logstr = 'repo id = {}, URL = {}, Status = {}'.format(
+            repo_id, response.url, response.status)
+        FetchPublicRepo.logger.info(logstr)
+
+        store_meta_data(key, res, repo_id)
