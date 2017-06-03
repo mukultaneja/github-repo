@@ -1,4 +1,5 @@
 
+import os
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, Boolean, ForeignKey
 
 
@@ -6,6 +7,8 @@ def main():
   '''
   Function: main
   '''
+  if not os.path.exists('db/'):
+    os.makedirs('db')
   engine = create_engine('sqlite:///db/repos.db')
   connection = engine.connect()
   metadata = MetaData()

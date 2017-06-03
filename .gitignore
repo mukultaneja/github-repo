@@ -1,7 +1,6 @@
 *.sublime-project
 *.sublime-workspace
 *.pyc
-*.db
 *.csv
 __init__.py
 .ipynb_checkpoints/
