@@ -16,4 +16,4 @@ This project is currenlty under **developement**. I have written **scrappers and
 1. To scrap data from github v3 API, one has to register its own [application](https://github.com/settings/developers) and create [access token](https://gist.github.com/caspyin/2288960) as well to authenticate itself to github v3 API.
 2. After step 1, run ``python build_schema.py`` from project directory to create a sqlite db named **repos.db** inside of **db directory**.
 3. To start scrappers, go to **github-repo/scrappers/repovis/repovis** and run ```python download_repos.py```. It will internally create a new process which calls the **scrapy framework** to download all the public repositories data and store it into the sqlite db along with th required meta data information.
-4. To load the default view, run ```python index.py``` and go to **localhost:8888 **on browser.
+4. To load the default view, run ```python index.py``` and go to **localhost:8888** on browser.
