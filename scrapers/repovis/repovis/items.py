@@ -28,19 +28,30 @@ class RepovisItem(scrapy.Item):
     engine = create_engine(ENGINE_STRING)
     connection = engine.connect()
 
-    def get_last_id(self):
+    def get_st_point(self):
         '''
         Function
         '''
-        query = 'SELECT max(id) FROM repos'
-        result = RepovisItem.connection.execute(query)
-        return [row[0] for row in result][0]
+        repo_id = None
+        try:
+            with open('st_point.txt') as st_point:
+                repo_id = st_point.readline()
+        except IOError:
+            return None
+
+        return int(repo_id)
+
+    def set_st_point(self, repo_id):
+        '''
+        Function
+        '''
+        with open('st_point.txt', 'w') as st_point:
+            st_point.write(repo_id)
 
     def process_response(self, response):
         '''
         Function
         '''
-        response_length = len(response)
         owners = pd.DataFrame()
         repos = pd.DataFrame()
         for row in response:
@@ -79,20 +90,19 @@ class RepovisItem(scrapy.Item):
         owners.fillna(' ')
         repos.fillna(' ')
 
-        self.store_public_repos(repos, owners)
-
-        return response[response_length - 1]['id']
-
-    def store_public_repos(self, repos, owners):
-        '''
-        Function
-        '''
         try:
             owners.drop('Unnamed: 0', inplace=True, axis=1)
             repos.drop('Unnamed: 0', inplace=True, axis=1)
         except ValueError:
             pass
 
+        self.store_public_repos(repos, owners)
+
+
+    def store_public_repos(self, repos, owners):
+        '''
+        Function
+        '''
         if len(owners) > 0:
             odo(owners, ENGINE_STRING + '::owners')
         if len(repos) > 0:

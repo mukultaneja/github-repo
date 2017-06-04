@@ -1,7 +1,7 @@
 
 import json
-import time
 import logging
+import re
 from logging.handlers import RotatingFileHandler
 import scrapy
 from repovis.items import RepovisItem
@@ -46,7 +46,7 @@ class FetchPublicRepo(scrapy.Spider):
         '''
         Function
         '''
-        repo_id = FetchPublicRepo.visitem.get_last_id()
+        repo_id = FetchPublicRepo.visitem.get_st_point()
         repo_id = 1 if repo_id is None else repo_id
         url = self.build_url(url=None, repo_id=repo_id)
         yield scrapy.Request(url=url, callback=self.parse)
@@ -58,7 +58,7 @@ class FetchPublicRepo(scrapy.Spider):
         process_response = FetchPublicRepo.visitem.process_response
         json_response = json.loads(response.text)
         json_response = sorted(json_response, key=lambda row: row['id'])
-        max_id = process_response(json_response)
+        process_response(json_response)
         logstr = None
         for row in json_response:
             repo_id = row['id']
@@ -82,11 +82,9 @@ class FetchPublicRepo(scrapy.Spider):
                                      meta={'repo_id': repo_id,
                                            'key': key})
 
-        # adding break as rate limit is 5000/ hr
-        time.sleep(360)
-
-        url = self.build_url(url=None, repo_id=max_id)
-        yield scrapy.Request(url=url, callback=self.parse)
+        link_url = re.search('\?since=\w+', response.headers['Link']).group(0)
+        next_repo_id = int(link_url.split('=')[1])
+        FetchPublicRepo.visitem.set_st_point('{}'.format(next_repo_id))
 
     def parse_next_url(self, response):
         '''
