@@ -1,30 +1,7 @@
-.page-header {
-	margin-top: 5px;
-}
+/* tag based styles */
+body{overflow-x:hidden;}
 
-.d3-tip {
-  line-height: 1;
-  font-weight: bold;
-  padding: 12px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  border-radius: 2px;
-}
-
-.d3-tip:after {
-  box-sizing: border-box;
-  display: inline;
-  font-size: 10px;
-  width: 100%;
-  line-height: 1;
-  color: rgba(0, 0, 0, 0.8);
-  content: "\25BC";
-  position: absolute;
-  text-align: center;
-}
-
-d3-tip.n:after {
-  margin: -1px 0 0 0;
-  top: 100%;
-  left: 0;
-}
+/* class based styles */
+.page-header{margin-top:5px;padding-bottom:0px;}
+.d3-tip{line-height:1;font-weight:bold;padding:12px;background:rgba(0,0,0,0.8);color:#fff;border-radius:2px;}
+div.overlay { position: absolute; z-index: 3; opacity: 0.5; filter: alpha(opacity=50); top: 0; bottom: 0; left: 0; right: 0; width: 100%; height: 100%; background-color: Black; color: White; }

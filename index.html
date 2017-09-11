@@ -1,17 +1,45 @@
 <html>
 	<head>
-		<link href="/static/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"/>
-		<link href="/static/css/style.css" rel="stylesheet"/>
+		<title>Top 10 Most Popular Languages For Open Source Projects</title>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	    <meta name="copyright" content="Mukul Taneja" />
+	    <meta name="description" content="A visual representation using github public repositories data to find out
+	    10 most popular languages for open source projects." />
+	    <meta name="robots" content="index, follow" />
+	    <meta name="author" content="Mukul Taneja" />
+	    <meta http-equiv="cache-control" content="max-age=86400" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
+	    <link href="/static/css/style.css" rel="stylesheet" />
 	</head>
 	<body>
-		<!--div classs="row">
-			<div class="col-md-12 col-xs-12 page-header">
-				<h2 class="text-center">Github Repositories Visual</h2>
-			</div>
-		</div-->
-		<script type="text/javascript" src="/static/bower_components/jquery/dist/jquery.min.js"></script>
-		<script type="text/javascript" src="/static/bower_components/d3/d3.min.js"></script>
-		<script type="text/javascript" src="/static/bower_components/d3-tip/d3.tip.min.js"></script>
-		<script type="text/javascript" src="/static/js/repos.js"></script>
+	    <div class="row">
+	        <div class="col-md-12 col-xs-12 page-header">
+	            <h3 class="text-center">Top 10 Most Popular Languages For Open Source Projects</h3>
+	        </div>
+	    </div>
+	    <div class="row">
+	    	<div class="col-md-12 col-xs-12 top-langs"></div>
+	    </div>
+	    <div class="row">
+	        <div class="col-md-12 col-xs-12 repovis"></div>
+	    </div>
+	    <div class="overlay" style="display: block">
+        	<img src="static/images/ajax-loader.gif" style="margin-left: 39%; margin-top: 10%" />
+    	</div>
+    	<!-- footer section of web page -->
+        <div class="container footer">
+            <footer class="text-center"></footer>
+        </div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js"></script>
+	    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+	    <script type="text/javascript" src="/static/js/repos.js"></script>
+	    <script type="text/javascript">
+	    	$('document').ready(function(){
+	    		var to_year = new Date().getFullYear();
+	    		$('div.footer footer').html('&copy; Mukul Taneja - ' + to_year);
+	    	});
+	    </script>
 	</body>
 </html>

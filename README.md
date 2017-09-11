@@ -9,7 +9,7 @@ The core idea behind this project is to create an interactive visualization of g
 2. Which is the most popular language used to create open source and personal projects?
 3. Distribution of public repositories based on meta data such as number of forks / number of contributors / number of starred for a particular repository.
 
-This project is currenlty under **developement**. I have written **scrappers and created sqlite DB structure** to store raw data so far. Apart from it, I have written a **tornado server** as well to run the default view where user can see the interactive visual of aggregate number of public repositories for the specific programming languages.
+This project is currenlty under **developement**. Please visit the [link](https://mukultaneja.github.io/analysis/github-repos/) to find the implementation as of now. I have written **scrappers and created sqlite DB structure** to store raw data so far. Apart from it, I have written a **tornado server** as well to run the default view where user can see the interactive visual of aggregate number of public repositories for the specific programming languages.
 
 ##### To run scrappers :
 

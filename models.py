@@ -27,6 +27,4 @@ def get_repos():
     data.sort_values(by=['value'], ascending=False, inplace=True)
     data = data.reset_index()
 
-    print len(data)
-
     return data.to_json(orient='records')

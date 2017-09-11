@@ -2,7 +2,7 @@
 import subprocess
 import os
 
-DIR = '/home/mac/Work/Mac/github-repo/scrapers/repovis/repovis'
+DIR = '/home/mac/Work/Mac/github-repos/scrapers/repovis/repovis'
 SCRAPY = '/home/mac/anaconda2/bin/scrapy'
 DIRNAME = os.path.dirname(__file__)
 SPIDER = os.path.join(

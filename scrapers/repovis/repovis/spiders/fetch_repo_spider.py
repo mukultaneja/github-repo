@@ -58,6 +58,9 @@ class FetchPublicRepo(scrapy.Spider):
         process_response = FetchPublicRepo.visitem.process_response
         json_response = json.loads(response.text)
         json_response = sorted(json_response, key=lambda row: row['id'])
+        link_url = re.search('\?since=\w+', response.headers['Link']).group(0)
+        next_repo_id = int(link_url.split('=')[1])
+        FetchPublicRepo.visitem.set_st_point('{}'.format(next_repo_id))
         process_response(json_response)
         logstr = None
         for row in json_response:
@@ -82,9 +85,6 @@ class FetchPublicRepo(scrapy.Spider):
                                      meta={'repo_id': repo_id,
                                            'key': key})
 
-        link_url = re.search('\?since=\w+', response.headers['Link']).group(0)
-        next_repo_id = int(link_url.split('=')[1])
-        FetchPublicRepo.visitem.set_st_point('{}'.format(next_repo_id))
 
     def parse_next_url(self, response):
         '''
