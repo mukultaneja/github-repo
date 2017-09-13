@@ -26,5 +26,6 @@ def get_repos():
     data = data.groupby(['language']).sum()
     data.sort_values(by=['value'], ascending=False, inplace=True)
     data = data.reset_index()
+    data.to_json('data.json', orient='records')
 
     return data.to_json(orient='records')

@@ -3,25 +3,27 @@ $('document').ready(function() {
 		w = 1360,
 		h = 560,
 		svg = d3.select('div.repovis')
-				.append('svg')
-				.attr('viewBox', '0 0 ' + w + ' ' + h)
-				.attr('preserveAspectRatio', 'xMidYMid meet'),
+		.append('svg')
+		.attr('viewBox', '0 0 ' + w + ' ' + h)
+		.attr('preserveAspectRatio', 'xMidYMid meet'),
 		radiusScale = d3.scale.sqrt().range([1, 140]),
 		colorScale = d3.scale.category10();
 
 	function charge(d) {
-		return radiusScale(d.value) * radiusScale(d.value) * -0.135;
+		return radiusScale(d.value) * radiusScale(d.value) * -0.148;
 	}
 
 	var force = d3.layout.force()
-		.gravity(0.1)
-		.distance(5)
+		.gravity(0.12)
+		.distance(12)
 		.charge(charge)
 		.size([w, h])
 		.alpha(0.3);
 
 	d3.json(url, function(error, data) {
-		data = data.sort(function(a, b){ return d3.descending(a.value, b.value) });
+		data = data.sort(function(a, b) {
+			return d3.descending(a.value, b.value)
+		});
 		var maxValue = parseInt(data[0].value),
 			topTenLanguages = new Array(),
 			totalSum = d3.sum(data, function(d) {
@@ -43,7 +45,7 @@ $('document').ready(function() {
 			.offset([-10, 0])
 			.html(function(d) {
 				return "<strong>Language: </strong> " + d.language + "</span>" +
-					   "<br /><strong>Used %: </strong> " + ((d.value / totalSum) * 100).toFixed(2) + '%';
+					"<br /><strong>Used %: </strong> " + ((d.value / totalSum) * 100).toFixed(2) + '%';
 			});
 
 		svg.call(tip);
@@ -74,30 +76,36 @@ $('document').ready(function() {
 
 		force.start();
 		svg = d3.select('div.top-langs')
-				.append('svg')
-				.attr('viewBox', '0 0 1800 50')
-				.attr('preserveAspectRatio', 'xMidYMid meet');
+			.append('svg')
+			.attr('viewBox', '0 0 1800 50')
+			.attr('preserveAspectRatio', 'xMidYMid meet');
 		g = svg.append('g').attr('transform', 'translate(60, 0)');
 		g.selectAll('rect')
-		 .data(topTenLanguages)
-		 .enter()
-		 .append('rect')
-		 .attr('x', function(d, i){ return 160 * i + 30})
-		 .attr('y', 10)
-		 .attr('width', 20)
-		 .attr('height', 20)
-		 .style('fill', function(d, i){ return colorScale(i); });
+			.data(topTenLanguages)
+			.enter()
+			.append('rect')
+			.attr('x', function(d, i) {
+				return 160 * i + 30
+			})
+			.attr('y', 10)
+			.attr('width', 20)
+			.attr('height', 20)
+			.style('fill', function(d, i) {
+				return colorScale(i);
+			});
 
 		g.selectAll('text')
-		 .data(topTenLanguages)
-		 .enter()
-		 .append('text')
-		 .attr('x', function(d, i){ return 160 * i + 60})
-		 .attr('y', 28)
-		 .text(function(d, i){
-		 	return d.language;
-		 })
-		 .style('font-size', '22px');
+			.data(topTenLanguages)
+			.enter()
+			.append('text')
+			.attr('x', function(d, i) {
+				return 160 * i + 60
+			})
+			.attr('y', 28)
+			.text(function(d, i) {
+				return d.language;
+			})
+			.style('font-size', '22px');
 
 		$('div.overlay').attr('style', 'display: none');
 	});

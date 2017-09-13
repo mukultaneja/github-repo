@@ -2,20 +2,21 @@
 	<head>
 		<title>Top 10 Most Popular Languages For Open Source Projects</title>
 	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	    <meta name="copyright" content="Mukul Taneja" />
-	    <meta name="description" content="A visual representation using github public repositories data to find out
-	    10 most popular languages for open source projects." />
-	    <meta name="robots" content="index, follow" />
-	    <meta name="author" content="Mukul Taneja" />
 	    <meta http-equiv="cache-control" content="max-age=86400" />
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 	    <link href="/static/css/style.css" rel="stylesheet" />
 	</head>
 	<body>
-	    <div class="row">
-	        <div class="col-md-12 col-xs-12 page-header">
+	    <div class="row page-header">
+	    	<div class="col-md-3 col-xs-3 last-updated-data">
+	    		<h5 style="margin-top: 24px; margin-left: 18px"></h5>
+	    	</div>
+	        <div class="col-md-6 col-xs-6">
 	            <h3 class="text-center">Top 10 Most Popular Languages For Open Source Projects</h3>
+	        </div>
+	        <div class="col-md-3 col-xs-3">
+	        	<h5 style="margin-top: 24px; margin-left: 32px">frequency - crawls 100 times per day</h5>
 	        </div>
 	    </div>
 	    <div class="row">
@@ -37,8 +38,13 @@
 	    <script type="text/javascript" src="/static/js/repos.js"></script>
 	    <script type="text/javascript">
 	    	$('document').ready(function(){
-	    		var to_year = new Date().getFullYear();
-	    		$('div.footer footer').html('&copy; Mukul Taneja - ' + to_year);
+	    		var date = new Date(),
+	    			day = date.getDate(),
+	    			month = date.getMonth() + 1,
+	    			year = date.getFullYear(),
+	    			textDate = day + '/' + month + '/' + year + ' 00:00:00 AM';
+	    		$('div.footer footer').html('&copy; Mukul Taneja - ' + year);
+	    		$('.last-updated-data h5').text('last updated data - ' + textDate);
 	    	});
 	    </script>
 	</body>

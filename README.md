@@ -1,19 +1,25 @@
 # Github Repository Visualization
 
 **Introduction :**
-This is one of my personal project in which I am implementing my data visualization and scraping skills. This project has been developed using **D3.js, Python, Scrapy and sqlite database**.
+To the introduction, this project is to find out the most popular programming languages for open source projects. The idea is to scrap public repositories data from Github Server using its own public API and to align the repositories according to their used programming languages. Finally, I am representing this data information in the form of visualization which listed out most popluar languages which people are using while working on open source projects.
 
-The core idea behind this project is to create an interactive visualization of github server. Using the visualization, a normal user can get an idea about the following. 
+**Technologies :**
+I have used multiple technologies to create this tool and it consists multiple steps from scrapping to visualization of the data. Primarily this project has been developed using **D3.js, Python Tornado Framework, Scrapy Framework and sqlite database**.
 
-1. Which is the most used language in the projects hosted over the github server?
-2. Which is the most popular language used to create open source and personal projects?
-3. Distribution of public repositories based on meta data such as number of forks / number of contributors / number of starred for a particular repository.
+**Working :**
+This is purely an open source proect, So I am sharing my code and all the processings behind the proect here (Ideas are always welcome to make it better :)). As I said earlier, this project consists multiple steps from scrapping data to visualization. So I would like to clear every step here,
 
-This project is currenlty under **developement**. Please visit the [link](https://mukultaneja.github.io/analysis/github-repos/) to find the implementation as of now. I have written **scrappers and created sqlite DB structure** to store raw data so far. Apart from it, I have written a **tornado server** as well to run the default view where user can see the interactive visual of aggregate number of public repositories for the specific programming languages.
+**Init Process**
+	To scrap data from github v3 API, one has to register its own [application](https://github.com/settings/developers) and create [access token](https://gist.github.com/caspyin/2288960) as well to authenticate itself to github v3 API.
 
-##### To run scrappers :
+**Stroing the Scrapped Data**
+	Github Server returns a JSON structure corresponding to one repository. Firstly, I am loading this structure into the main memory using pandas library and then creating a relational structure between repositories, its owners and several other informations such as forks/ languages / contributors. Finally, I am using sqlite database to store this relational structure.
 
-1. To scrap data from github v3 API, one has to register its own [application](https://github.com/settings/developers) and create [access token](https://gist.github.com/caspyin/2288960) as well to authenticate itself to github v3 API.
-2. After step 1, run ``python build_schema.py`` from project directory to create a sqlite db named **repos.db** inside of **db directory**.
-3. To start scrappers, go to **github-repo/scrappers/repovis/repovis** and run ```python download_repos.py```. It will internally create a new process which calls the **scrapy framework** to download all the public repositories data and store it into the sqlite db along with th required meta data information.
-4. To load the default view, run ```python index.py``` and go to **localhost:8888** on browser.
+**Running Scrappers**
+	I am running scrappers through cronjobs on my local machine. It is a continous process and Github allows 5000 requests per hour for authenticated users. So I am running this job in every 6 seconds on my local maching and fetching the data from Github Servers. 
+	
+**Visualizing Data**
+	Apart from scrappers & relational database, I have written a tornado server to access all this data information in a clean and better manner using REST API and finally I am putting this data information into d3.js at the client side and creating an interactive visual.
+
+
+Please visit the [link](https://mukultaneja.github.io/analysis/github-repos/) to find the implementation as of now.
